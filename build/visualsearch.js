@@ -33,6 +33,8 @@
       autosearch     : true,
       autoFocusFacet : true,
       autoFocusValue : true,
+      matchStartOfFacet: true,
+      matchStartOfValue: true,
       unquotable     : [],
       remainder      : 'text',
       showFacets     : true,
@@ -699,6 +701,8 @@ VS.ui.SearchFacet = Backbone.View.extend({
     var category = this.model.get('category');
     var value    = this.model.get('value');
     var searchTerm = req.term;
+    var matchStartOfValue = this.app.options.matchStartOfValue;
+    var startRegEx = matchStartOfValue ? '\\b' : '';
 
     this.app.options.callbacks.valueMatches(category, searchTerm, function(matches, options) {
       options = options || {};
@@ -709,7 +713,9 @@ VS.ui.SearchFacet = Backbone.View.extend({
           resp(matches);
         } else {
           var re = VS.utils.inflector.escapeRegExp(searchTerm || '');
-          var matcher = new RegExp('\\b' + re, 'i');
+
+          var matcher = new RegExp(startRegEx + re, 'i');
+
           matches = $.grep(matches, function(item) {
             return matcher.test(item) ||
                    matcher.test(item.value) ||
@@ -1088,12 +1094,14 @@ VS.ui.SearchInput = Backbone.View.extend({
     var searchTerm = req.term;
     var lastWord   = searchTerm.match(/\w+\*?$/); // Autocomplete only last word.
     var re         = VS.utils.inflector.escapeRegExp(lastWord && lastWord[0] || '');
+    var matchStartOfFacet = this.app.options.matchStartOfFacet;
+    var startRegEx = matchStartOfFacet ? '^' : '';
+
     this.app.options.callbacks.facetMatches(function(prefixes, options) {
       options = options || {};
       prefixes = prefixes || [];
 
-      // Only match from the beginning of the word.
-      var matcher    = new RegExp('^' + re, 'i');
+      var matcher    = new RegExp(startRegEx + re, 'i');
       var matches    = $.grep(prefixes, function(item) {
         return item && matcher.test(item.label || item);
       });
