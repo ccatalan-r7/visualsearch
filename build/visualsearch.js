@@ -1092,7 +1092,7 @@ VS.ui.SearchInput = Backbone.View.extend({
   // `facetMatches` callback to skip any further ordering done client-side.
   autocompleteValues : function(req, resp) {
     var searchTerm = req.term;
-    var lastWord   = searchTerm.match(/\w+\*?$/); // Autocomplete only last word.
+    var lastWord   = searchTerm.match(/.+?$/); // Autocomplete only last word.
     var re         = VS.utils.inflector.escapeRegExp(lastWord && lastWord[0] || '');
     var matchStartOfFacet = this.app.options.matchStartOfFacet;
     var startRegEx = matchStartOfFacet ? '^' : '';
