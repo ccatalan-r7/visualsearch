@@ -1775,6 +1775,14 @@ VS.app.SearchParser = {
     return searchFacets;
   },
 
+  // Returns whether a query is free-text
+  // @example isFreeText('hey:there')    #=> false
+  // @example isFreeText('hey: "there"') #=> false
+  // @example isFreeText('hello')        #=> true
+  isFreeText : function (query) {
+    return this._extractNextField(query) == null ? true : false;
+  },
+
   // Walks the query and extracts facets, categories, and free text.
   _extractAllFacets : function(instance, query) {
     var facets = [];
