@@ -493,6 +493,13 @@ VS.ui.SearchBox = Backbone.View.extend({
     }
   },
 
+  // Gets the last typed input text value for category,
+  // i.e what the user has typed but not yet tokenized into a facet
+  getLastInputText : function() {
+    var inputViewsCount = this.inputViews.length;
+    return this.inputViews[inputViewsCount-1].value();
+  },
+
   maybeTripleClick : function(e) {
     var lastinput = this.inputViews[this.inputViews.length-1];
     return lastinput.maybeTripleClick(e);
