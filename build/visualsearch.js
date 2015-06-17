@@ -1327,10 +1327,17 @@ VS.ui.SearchInput = Backbone.View.extend({
   search : function(e, direction) {
     if (!direction) direction = 0;
     this.closeAutocomplete();
-    this.app.searchBox.searchEvent(e);
-    _.defer(_.bind(function() {
-      this.app.searchBox.focusNextFacet(this, direction);
-    }, this));
+    var enableFreeText = this.app.options.enableFreeText;
+    var lastInputText  = this.app.searchBox.getLastInputText();
+    var isFreeText     = VS.app.SearchParser.isFreeText(lastInputText);
+    if(isFreeText && enableFreeText) {
+      this.app.searchBox.searchEvent(e);
+      _.defer(_.bind(function () {
+        this.app.searchBox.focusNextFacet(this, direction);
+      }, this));
+    } else {
+      this.app.searchBox.focusSearch(this);
+    }
   },
 
   // Callback fired on key press in the search box. We search when they hit return.
