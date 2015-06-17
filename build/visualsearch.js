@@ -39,6 +39,8 @@
       remainder      : 'text',
       showFacets     : true,
       readOnly       : false,
+      enableFreeText : true,
+      noMatchText    : '[No matches]',
       callbacks      : {
         search          : $.noop,
         focus           : $.noop,
