@@ -1067,9 +1067,17 @@ VS.ui.SearchInput = Backbone.View.extend({
         e.preventDefault();
         // stopPropogation does weird things in jquery-ui 1.9
         // e.stopPropagation();
-        var remainder = this.addTextFacetRemainder(ui.item.label || ui.item.value);
-        var position  = this.options.position + (remainder ? 1 : 0);
-        this.app.searchBox.addFacet(ui.item instanceof String ? ui.item : ui.item.value, '', position);
+        var enableFreeText = this.app.options.enableFreeText;
+        var noMatchText    = this.app.options.noMatchText;
+        if (enableFreeText) {
+          var remainder = this.addTextFacetRemainder(ui.item.label || ui.item.value);
+          var position  = this.options.position + (remainder ? 1 : 0);
+        } else {
+          var position = this.options.position;
+        }
+        if ((ui.item.label || ui.item.value) !== noMatchText) {
+          this.app.searchBox.addFacet(ui.item instanceof String ? ui.item : ui.item.value, '', position);
+        }
         return false;
       }, this)
     });
