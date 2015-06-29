@@ -37,6 +37,7 @@
       readOnly    : false,
       autoFocusFacet : true,
       autoFocusValue : true,
+      matchStartOfFacet: true,
       callbacks   : {
         search          : $.noop,
         focus           : $.noop,
@@ -1052,7 +1053,8 @@ VS.ui.SearchInput = Backbone.View.extend({
         e.preventDefault();
         // stopPropogation does weird things in jquery-ui 1.9
         // e.stopPropagation();
-        var remainder = this.addTextFacetRemainder(ui.item.label || ui.item.value);
+        var matchStartOfFacet = this.app.options.matchStartOfFacet;
+        var remainder = matchStartOfFacet ? this.addTextFacetRemainder(ui.item.label || ui.item.value) : null;
         var position  = this.options.position + (remainder ? 1 : 0);
         this.app.searchBox.addFacet(ui.item instanceof String ? ui.item : ui.item.value, '', position);
         return false;
@@ -1088,12 +1090,14 @@ VS.ui.SearchInput = Backbone.View.extend({
     var searchTerm = req.term;
     var lastWord   = searchTerm.match(/\w+\*?$/); // Autocomplete only last word.
     var re         = VS.utils.inflector.escapeRegExp(lastWord && lastWord[0] || '');
+    var matchStartOfFacet = this.app.options.matchStartOfFacet;
+    var startRegEx = matchStartOfFacet ? '^' : '';
+
     this.app.options.callbacks.facetMatches(function(prefixes, options) {
       options = options || {};
       prefixes = prefixes || [];
 
-      // Only match from the beginning of the word.
-      var matcher    = new RegExp('^' + re, 'i');
+      var matcher    = new RegExp(startRegEx + re, 'i');
       var matches    = $.grep(prefixes, function(item) {
         return item && matcher.test(item.label || item);
       });
@@ -1318,7 +1322,8 @@ VS.ui.SearchInput = Backbone.View.extend({
       });
       if (_.contains(labels, query)) {
         e.preventDefault();
-        var remainder = this.addTextFacetRemainder(query);
+        var matchStartOfFacet = this.app.options.matchStartOfFacet;
+        var remainder = matchStartOfFacet ? this.addTextFacetRemainder(query) : null;
         var position  = this.options.position + (remainder?1:0);
         this.app.searchBox.addFacet(query, '', position);
         return false;
