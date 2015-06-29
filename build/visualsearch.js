@@ -38,6 +38,7 @@
       autoFocusFacet : true,
       autoFocusValue : true,
       matchStartOfFacet: true,
+      matchStartOfValue: true,
       callbacks   : {
         search          : $.noop,
         focus           : $.noop,
@@ -700,6 +701,8 @@ VS.ui.SearchFacet = Backbone.View.extend({
     var category = this.model.get('category');
     var value    = this.model.get('value');
     var searchTerm = req.term;
+    var matchStartOfValue = this.app.options.matchStartOfValue;
+    var startRegEx = matchStartOfValue ? '\\b' : '';
 
     this.app.options.callbacks.valueMatches(category, searchTerm, function(matches, options) {
       options = options || {};
@@ -710,7 +713,7 @@ VS.ui.SearchFacet = Backbone.View.extend({
           resp(matches);
         } else {
           var re = VS.utils.inflector.escapeRegExp(searchTerm || '');
-          var matcher = new RegExp('\\b' + re, 'i');
+          var matcher = new RegExp(startRegEx + re, 'i');
           matches = $.grep(matches, function(item) {
             return matcher.test(item) ||
                    matcher.test(item.value) ||
