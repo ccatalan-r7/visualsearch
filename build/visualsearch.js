@@ -1069,7 +1069,6 @@ VS.ui.SearchInput = Backbone.View.extend({
         var supportDotInFacet = this.app.options.supportDotInFacet;
         var enableFreeText = this.app.options.enableFreeText;
         var noMatchText    = this.app.options.noMatchText;
-        // var remainder =  supportDotInFacet ? null : this.addTextFacetRemainder(ui.item.label || ui.item.value);
         if (supportDotInFacet || !enableFreeText) {
           var remainder = null;
         } else {
@@ -1330,10 +1329,17 @@ VS.ui.SearchInput = Backbone.View.extend({
   search : function(e, direction) {
     if (!direction) direction = 0;
     this.closeAutocomplete();
-    this.app.searchBox.searchEvent(e);
-    _.defer(_.bind(function() {
-      this.app.searchBox.focusNextFacet(this, direction);
-    }, this));
+    var enableFreeText = this.app.options.enableFreeText;
+    var lastInputText  = this.app.searchBox.getLastInputText();
+    var isFreeText     = VS.app.SearchParser.isFreeText(lastInputText);
+    if(isFreeText && enableFreeText) {
+      this.app.searchBox.searchEvent(e);
+      _.defer(_.bind(function () {
+        this.app.searchBox.focusNextFacet(this, direction);
+      }, this));
+    } else {
+      this.app.searchBox.focusSearch(this);
+    }
   },
 
   // Callback fired on key press in the search box. We search when they hit return.
