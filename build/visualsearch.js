@@ -35,6 +35,8 @@
       remainder   : 'text',
       showFacets  : true,
       readOnly    : false,
+      autoFocusFacet : true,
+      autoFocusValue : true,
       callbacks   : {
         search          : $.noop,
         focus           : $.noop,
@@ -613,7 +615,7 @@ VS.ui.SearchFacet = Backbone.View.extend({
       source    : _.bind(this.autocompleteValues, this),
       minLength : 0,
       delay     : 0,
-      autoFocus : true,
+      autoFocus : this.app.options.autoFocusValue,
       position  : {offset : "0 5"},
       create    : _.bind(function(e, ui) {
         $(this.el).find('.ui-autocomplete-input').css('z-index','auto');
@@ -1038,7 +1040,7 @@ VS.ui.SearchInput = Backbone.View.extend({
     this.box.autocomplete({
       minLength : this.options.showFacets ? 0 : 1,
       delay     : 50,
-      autoFocus : true,
+      autoFocus : this.app.options.autoFocusFacet,
       position  : {offset : "0 -1"},
       source    : _.bind(this.autocompleteValues, this),
       // Prevent changing the input value on focus of an option
