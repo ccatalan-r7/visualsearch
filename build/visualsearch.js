@@ -39,6 +39,7 @@
       autoFocusValue : true,
       matchStartOfFacet: true,
       matchStartOfValue: true,
+      supportDotInFacet: false,
       callbacks   : {
         search          : $.noop,
         focus           : $.noop,
@@ -1056,8 +1057,8 @@ VS.ui.SearchInput = Backbone.View.extend({
         e.preventDefault();
         // stopPropogation does weird things in jquery-ui 1.9
         // e.stopPropagation();
-        var matchStartOfFacet = this.app.options.matchStartOfFacet;
-        var remainder = matchStartOfFacet ? this.addTextFacetRemainder(ui.item.label || ui.item.value) : null;
+        var supportDotInFacet = this.app.options.supportDotInFacet;
+        var remainder =  supportDotInFacet ? null : this.addTextFacetRemainder(ui.item.label || ui.item.value);
         var position  = this.options.position + (remainder ? 1 : 0);
         this.app.searchBox.addFacet(ui.item instanceof String ? ui.item : ui.item.value, '', position);
         return false;
@@ -1091,7 +1092,9 @@ VS.ui.SearchInput = Backbone.View.extend({
   // `facetMatches` callback to skip any further ordering done client-side.
   autocompleteValues : function(req, resp) {
     var searchTerm = req.term;
-    var lastWord   = searchTerm.match(/\w+\*?$/); // Autocomplete only last word.
+    var supportDotInFacet = this.app.options.supportDotInFacet;
+    var lastWordRegEx = supportDotInFacet ? /.+?$/ : /\w+\*?$/;
+    var lastWord   = searchTerm.match(lastWordRegEx); // Autocomplete only last word.
     var re         = VS.utils.inflector.escapeRegExp(lastWord && lastWord[0] || '');
     var matchStartOfFacet = this.app.options.matchStartOfFacet;
     var startRegEx = matchStartOfFacet ? '^' : '';
@@ -1365,7 +1368,9 @@ VS.ui.SearchInput = Backbone.View.extend({
       var value = this.box.val();
       if (value.length) {
         e.preventDefault();
-        var remainder = this.addTextFacetRemainder(value);
+        var supportDotInFacet = this.app.options.supportDotInFacet;
+        var remainder = supportDotInFacet ? null : this.addTextFacetRemainder(value);
+
         var position  = this.options.position + (remainder?1:0);
         if (value != remainder) {
             this.app.searchBox.addFacet(value, '', position);
