@@ -7,14 +7,8 @@
     "@samuelclay"
   ],
   "description": "A Rich Search Box for Real Data",
-  "main": ["build-min/visualsearch-datauri.css", "build-min/visualsearch.css", "build-min/visualsearch.js"],
+  "main": ["build/visualsearch-datauri.css", "build/visualsearch.css", "build/visualsearch.js"],
   "license": "MIT",
-  "dependencies": {
-    "jquery": ">=1.4",
-    "jquery-ui": ">=1.8",
-    "backbone": ">=0.9.10",
-    "underscore":">=1.4.3"
-  },
   "ignore": [
     "**/.*",
     "node_modules",
@@ -24,7 +18,8 @@
     "Rakefile",
     "vendor",
     "*.html",
-    "build",
+    "build-min",
+    "lib",
     "docs",
     "*.yml"
   ]
