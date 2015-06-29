@@ -40,6 +40,8 @@
       matchStartOfFacet: true,
       matchStartOfValue: true,
       supportDotInFacet: false,
+      enableFreeText : true,
+      noMatchText    : '[No matches]',
       callbacks   : {
         search          : $.noop,
         focus           : $.noop,
@@ -1105,6 +1107,9 @@ VS.ui.SearchInput = Backbone.View.extend({
     var re         = VS.utils.inflector.escapeRegExp(lastWord && lastWord[0] || '');
     var matchStartOfFacet = this.app.options.matchStartOfFacet;
     var startRegEx = matchStartOfFacet ? '^' : '';
+    var box = this.box;
+    var noMatchText = this.app.options.noMatchText;
+    var enableFreeText = this.app.options.enableFreeText;
 
     this.app.options.callbacks.facetMatches(function(prefixes, options) {
       options = options || {};
@@ -1115,7 +1120,13 @@ VS.ui.SearchInput = Backbone.View.extend({
         return item && matcher.test(item.label || item);
       });
 
-      if (options.preserveOrder) {
+      if (matches.length == 0 && !enableFreeText) {
+        // Note: autocomplete's autofocus is temporarily set to false
+        // so that the noMatchText will not selected on the dropdown by default
+        box.autocomplete( "option", "autoFocus", false);
+        resp([noMatchText]);
+        box.autocomplete( "option", "autoFocus", true);
+      } else if (options.preserveOrder) {
         resp(matches);
       } else {
         resp(_.sortBy(matches, function(match) {
